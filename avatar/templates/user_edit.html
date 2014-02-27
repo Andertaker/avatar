@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование {% endblock %}
+
+{% block base_content %}
+
+
+	<a href="/">Список пользователей</a> <br><br>
+	
+	
+	Пользователь <strong>{{ selected_user }}</strong><br>
+	E-mail	<strong>{{ selected_user.email }}</strong><br>
+	
+	
+	Аватар:<br>
+	<div id="userpic" class="userpic" >
+		<div id="userpic__preview" class="js-preview userpic__preview"> </div>
+		<br><br><br>
+		<div class="btn btn-success js-fileapi-wrapper">
+			<div class="js-browse">
+				<span class="btn-txt">Choose</span>
+				<input type="file" id="avatar" name="avatar"/>
+			</div>
+			<div class="js-upload" style="display: none;">
+				<div class="progress progress-success"><div class="js-progress bar"> </div></div>
+				<span class="btn-txt">Uploading</span>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div id="popup" class="popup" style="display: none;">
+		<div class="popup__body"><div class="js-img"> </div></div>
+		<div style="margin: 0 0 5px; text-align: center;">
+			<div class="js-upload btn btn_browse btn_browse_small">Upload</div>
+		</div>
+	</div>
+
+
+	<script>
+		csrftoken = $.cookie('csrftoken');
+		upload_to = "{% url 'avatar_upload' selected_user.id %}";
+		avatar_url = "{{ selected_user.profile.avatar.url }}";
+	
+	</script>
+
+	<script src="{{ STATIC_URL }}userpic.js"></script>
+	
+	
+	<br><br><br>
+	
+
+
+	<br><br><br><br>
+	
+	<form method="post" action="{% url 'user_edit' selected_user.id %}">
+		{% csrf_token %}
+		
+		<table>
+			{{ form.as_table }}
+		
+		</table>
+	
+		<input type="submit" value="Сохранить">
+			
+	</form>
+		
+
+
+
+
+		
+		
+	<br><br><br><br><br><br><br><br>
+		
+	
+		
+	<br><br>Обычная форма загрузки(для отладки):
+	Аватар:<br>
+	{{ selected_user.profile.avatar.url }}<br>
+	<img src="{{ selected_user.profile.avatar.url }}" width=200 height=200 />
+		
+	<br><br>	
+
+	<form method="post" action="{% url 'avatar_upload' selected_user.id %}" enctype="multipart/form-data">
+		{% csrf_token %}
+		<input name="avatar" type="file"><br>
+		
+		
+		<input type="submit" value="Сохранить">
+	</form>
+	<!--	
+	
+	!-->	
+		
+		
+		
+		
+{% endblock %}

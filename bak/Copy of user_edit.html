@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование {% endblock %}
+
+{% block base_content %}
+
+
+	<a href="/">Список пользователей</a> <br><br>
+	
+	
+	
+	
+	Пользователь <strong>{{ selected_user }}</strong><br>
+	E-mail	<strong>{{ selected_user.email }}</strong><br>
+	
+	
+	
+	
+	
+	<br><br><br><br>
+	
+	<form method="post" action="{% url 'user_edit' selected_user.id %}">
+		{% csrf_token %}
+		
+		<table>
+			{{ form.as_table }}
+		
+		</table>
+	
+		<input type="submit" value="Сохранить">
+			
+	</form>
+		
+	{{ csrf_token.value }}
+			
+	<br><br>
+	Аватар:<br>
+	<img src="{{ selected_user.profile.avatar.url }}" width=200 height=200 />
+		
+	<br><br>	
+
+	<form method="POST" action="{% url 'avatar_upload' selected_user.id %}" enctype="multipart/form-data">
+		{% csrf_token %}
+		<input name="avatar" type="file"><br>
+		
+		
+		<input type="submit" value="Сохранить">
+	</form>
+
+
+		
+	<br>
+	<br>
+	<br>	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	<form name="userpic" class="upload">
+		<div id="preview" class="upload__preview"></div>
+
+		<div class="upload__progress">Uploading&hellip;</div>
+
+		<div class="upload__link">
+			<a class="upload-link js-fileapi-wrapper">
+				<span class="upload-link__txt">Browse pic</span>
+				<input class="upload-link__inp" name="photo" type="file" accept=".jpg,.jpeg,.gif" />
+			</a>
+		</div>
+	</form>
+
+	<script>
+	var csrftoken = getCookie('csrftoken');
+
+	
+	
+	
+		(function (){
+			// Ссылка на uploader
+			var form = document.forms.userpic;
+
+			// Ссылка на инпут, через который юзер будет выбирать файл
+			var input = form.photo;
+
+			// Ссылка на DOM-элемент, где будем отображать preview
+			var preview = document.getElementById('preview');
+
+			// Параметры предварительного просмотра
+			var previewOpts = {
+				  width:  200
+				, height: 200
+			};
+
+			// Параметры загрузки
+			var uploadOpts = {
+				  url: '/avatar_upload/4/' // куда грузить
+				, data: {"csrfmiddlewaretoken": csrftoken} // дополнительный POST-параметры
+				, name: 'avatar' // название POST-параметра загружаемого файла
+				, activeClassName: 'upload_active' // класс, который будем добавлять общему контейнеру при загрузке
+			};
+
+			// Функция, которая будет срабатывать при выборе файла
+			var _onSelectFile = function (evt/**Event*/){
+				// Получаем выбранный файл
+				var file = FileAPI.getFiles(evt)[0];
+
+				if( file ){
+					// Строим preview для изображений
+					_createPreview(file);
+
+					// Загружаем файл на сервер
+					_uploadFile(file);
+				}
+			};
+
+			// Функция создающая preview для изображения
+			var _createPreview = function (file/**File*/){
+				FileAPI.Image(file)
+					.preview(previewOpts.width, previewOpts.height)
+					.get(function (err, image){
+						// Если не было ошибок, то вставляем изображение
+						if( !err ){
+							// Отчищаем контейнер от текущего изображения
+							preview.innerHTML = '';
+
+							// Вставляем новое
+							preview.appendChild(image);
+						}
+					})
+				;
+			};
+
+			// Функция загрузки файла на сервер
+			var _uploadFile = function (file){
+				// Подготавливаем опции для загрузки
+				var opts = FileAPI.extend(uploadOpts, {
+					files: {},
+
+					// событие "начало загрузки"
+					upload: function (){
+						form.className += ' '+uploadOpts.activeClassName;
+					},
+
+					// событие "конец загрузки"
+					complete: function (err, xhr){
+						form.className = (' '+form.className+' ').replace(' '+uploadOpts.activeClassName+' ', ' ');
+
+						if( err ){
+							alert('Увы, произошла ошибка сервера.');
+						} else {
+							// всё успешно загрузилось
+							console.log(xhr)
+							
+							response = xhr.getAllResponseHeaders()
+							console.log(response)
+							
+							
+						}
+					}
+				});
+
+				// Добавляем файл, который будем загружать
+				opts.files[opts.name] = file;
+
+				// Загружаем на сервер
+				FileAPI.upload(opts);
+			};
+
+			// Подписываемся на событие "change", оно будет срабатывать при выборе файла
+			FileAPI.event.on(input, "change", _onSelectFile);
+		})();
+	</script>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+{% endblock %}

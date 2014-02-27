@@ -1,0 +1,10 @@
+
+    <h2>Список пользователей</h2>
+    <ul>
+        {% for u in user_list %}
+            <li>
+            	<a href="{% url 'user_edit' u.id %}">{{ u.username }}</a>
+            	
+            </li>
+        {% endfor %}
+    </ul>
